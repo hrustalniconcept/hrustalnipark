@@ -618,18 +618,18 @@ function getUTM(){var p=new URLSearchParams(location.search),u={};['utm_source',
 function sendLead(lead){
  if(!TG_TOKEN||!TG_CHAT_ID)return;
  var u=getUTM();
- var L=['\uD83C\uDFE0 *Новая заявка — Датский 75,7 м\u00B2*','',
-   '*Тип:* '+lead.type,
-   '*Имя:* '+lead.name,
-   '*Телефон:* '+lead.phone];
- if(lead.mode) L.push('*Формат:* '+lead.mode);
- if(lead.q)    L.push('*Вопрос:* '+lead.q);
- L.push('*Страница:* '+location.href);
- if(u.utm_source)   L.push('*utm\_source:* '+u.utm_source);
- if(u.utm_campaign) L.push('*utm\_campaign:* '+u.utm_campaign);
- try{fetch('https://api.telegram.org/bot'+TG_TOKEN+'/sendMessage',{method:'POST',
-   headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({chat_id:TG_CHAT_ID,text:L.join('\n'),parse_mode:'Markdown',disable_web_page_preview:true})}).catch(function(){});}catch(e){}
+ var L=['\uD83C\uDFE0 Новая заявка \u2014 Датский 75,7 м\u00B2','',
+   'Тип: '+lead.type,
+   'Имя: '+lead.name,
+   'Телефон: '+lead.phone];
+ if(lead.mode) L.push('Формат: '+lead.mode);
+ if(lead.q)    L.push('Вопрос: '+lead.q);
+ L.push('Страница: '+location.href);
+ if(u.utm_source)   L.push('utm_source: '+u.utm_source);
+ if(u.utm_campaign) L.push('utm_campaign: '+u.utm_campaign);
+ // form-encoded + без кастомных заголовков => нет CORS-preflight, запрос реально уходит
+ var body=new URLSearchParams({chat_id:TG_CHAT_ID,text:L.join('\n'),disable_web_page_preview:'true'});
+ try{fetch('https://api.telegram.org/bot'+TG_TOKEN+'/sendMessage',{method:'POST',body:body}).catch(function(){});}catch(e){}
 }
 // form submit: validate -> Telegram -> success
 document.getElementById('leadform').addEventListener('submit',function(e){e.preventDefault();
